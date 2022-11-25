@@ -25,10 +25,12 @@ class Cocktail {
             return *this; // returns the left-hand object
         }
             
+         id = rhs.id;
+         ml = rhs.ml;
          //delete topping;
-         const char *temp = rhs.topping;
-         topping = temp;
-         delete temp;
+         //const char *temp = rhs.topping;
+         topping = rhs.topping;
+         //delete temp;
         
          return *this;
     }
@@ -94,8 +96,13 @@ class SpecialMartini: public Martini{
         SpecialMartini& operator=(const SpecialMartini& rhs)
         {
             Cocktail::operator=(rhs);
-            specialIngredient = rhs.specialIngredient;
+            specialIngredient = rhs.specialIngredient; //if we comment this, the private parameter will not change
             return *this;
+        }
+        
+        void changeSpecialIngredient()
+        {
+            this->specialIngredient = "chili";
         }
 
         std::string toString(){
@@ -143,6 +150,7 @@ int main() {
 
     SpecialMartini specialMartini1(3, 250, "mint");
     SpecialMartini specialMartini2(4, 150, "lemon peel");
+    specialMartini2.changeSpecialIngredient();
 
     cout<<"Before:\n";
     cout<< specialMartini1.toString();
@@ -154,7 +162,5 @@ int main() {
     cout<< specialMartini2.toString();
 
 
-
-    
     return 0;
 }
