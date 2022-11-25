@@ -6,10 +6,11 @@ class Cocktail {
     protected:
         int id;
         int ml;
+        const char* topping;
 
     public:
     Cocktail(){};
-    Cocktail(const int& id, const int& ml);
+    Cocktail(const int& id, const int& ml, const char* topping);
     ~Cocktail();
 
     int getMl(){
@@ -18,7 +19,18 @@ class Cocktail {
 
     Cocktail& operator=(const Cocktail& rhs)
     {
-        return *this; // returns the left-hand object
+        if(this == &rhs)
+        {
+            cout<<"self assignation:"<<endl;
+            return *this; // returns the left-hand object
+        }
+            
+         //delete topping;
+         const char *temp = rhs.topping;
+         topping = temp;
+         delete temp;
+        
+         return *this;
     }
 
     Cocktail& operator+=(const Cocktail& rhs)
@@ -32,7 +44,7 @@ class Cocktail {
     }
 };
 
-Cocktail::Cocktail(const int& id, const int& ml) :id(id),ml(ml)
+Cocktail::Cocktail(const int& id, const int& ml, const char* topping) :id(id),ml(ml),topping(topping)
     {
         cout<<"Cocktail created"<<endl;
     }
@@ -42,18 +54,25 @@ Cocktail::~Cocktail(){ }
 class Martini : public Cocktail {
     public:
         Martini(){};
-        Martini(const int& id, const int& ml):Cocktail(id,ml){}
+        Martini(const int& id, const int& ml, const char* topping):Cocktail(id,ml,topping){
+            //specialIngredient = "no";
+            //cout<<"Special ingredient: "<<specialIngredient<<endl;
+        }
         ~Martini(){};
 
         void listIngredients(){
             cout<<"Martini ingredients: gin, vermouth, orange bitters "<< endl;
         }
+
+
+    // private:
+    //     const char* specialIngredient;
 };
 
 
 class Sunrise : public Cocktail{
     public:
-        Sunrise(const int& id, const int& ml):Cocktail(id,ml){}
+        Sunrise(const int& id, const int& ml, const char* topping):Cocktail(id,ml,topping){}
         ~Sunrise(){};
         Sunrise(const Sunrise&) = delete;
         Sunrise& operator= (const Sunrise&) = delete;
@@ -64,12 +83,40 @@ class Sunrise : public Cocktail{
 };
 
 
+class SpecialMartini: public Martini{
+    public:
+        SpecialMartini(){};
+        SpecialMartini(const int& id, const int& ml, const char* topping):Martini(id,ml,topping){
+            specialIngredient = "cinamon";
+        }
+        ~SpecialMartini(){};
+
+        SpecialMartini& operator=(const SpecialMartini& rhs)
+        {
+            Cocktail::operator=(rhs);
+            specialIngredient = rhs.specialIngredient;
+            return *this;
+        }
+
+        std::string toString(){
+        return "Cocktail nr "+ to_string(this->id) +" : "+ to_string(this->ml) + " ml," + "topping = " + this->topping +", \tspecial ingredient: " +this->specialIngredient +"\n";
+    }
+        
+    private:
+        const char* specialIngredient;
+};
+
+
 int main() {
 
-    Martini martini(1, 200);
-    Sunrise sunrise(2, 300);
+    Martini martini(1, 200, "cherry");
+    Sunrise sunrise(2, 300, "orange peel");
+    cout<<endl;
 
+    cout<< martini.toString();
     martini.listIngredients();
+
+    cout<< sunrise.toString();
     sunrise.listIngredients();
 
     // calling the copy constructor
@@ -91,5 +138,23 @@ int main() {
     martini2 = martini;
     cout<<"After   = : "<< martini2.toString(); //you cannot go back to previous martini, the left value is rturned
 
+    martini = martini;
+    cout<<"After   = : "<< martini.toString();
+
+    SpecialMartini specialMartini1(3, 250, "mint");
+    SpecialMartini specialMartini2(4, 150, "lemon peel");
+
+    cout<<"Before:\n";
+    cout<< specialMartini1.toString();
+    cout<< specialMartini2.toString();
+    specialMartini1 = specialMartini2;
+
+    cout<<"After:\n";
+    cout<< specialMartini1.toString();
+    cout<< specialMartini2.toString();
+
+
+
+    
     return 0;
 }
